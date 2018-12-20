@@ -1,0 +1,2 @@
+This project aims to predict the Road quality based on the accelerometer and gyroscope data that I collected. It also has the data visualizations
+and different machine learning model implementations to judge which classifier better predicts the classes of roads.
