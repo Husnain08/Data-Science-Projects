@@ -1,0 +1,6 @@
+Each attribute is wifi signal strength observed on smartphone.
+The data was Collected to perform experimentation on how wifi signal strengths can be used to determine one of the indoor locations.
+
+The decision variable is one of the four rooms.
+
+
