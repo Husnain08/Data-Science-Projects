@@ -1,0 +1,119 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+
+
+
+
+
+```{r packages}
+
+rm(list=ls())                # free up memory for the download of the data sets
+library(knitr)
+library(caret)
+library(ggplot2)
+library(lattice)
+library(rpart)
+library(rpart.plot)
+library(rattle)
+library(randomForest)
+set.seed(12345)
+
+```
+
+
+
+
+
+
+
+```{r 1}
+
+# set the URL for the download
+UrlTrain <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+UrlTest  <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+# download the datasets
+training <- read.csv(url(UrlTrain))
+testing  <- read.csv(url(UrlTest))
+
+
+
+
+```
+
+```{r 2}
+
+library(caret)
+inTrain  <- createDataPartition(training$classe, p=0.7, list=FALSE)
+TrainSet <- training[inTrain, ]
+TestSet  <- training[-inTrain, ]
+# remove variables with Nearly Zero Variance
+NZV <- nearZeroVar(TrainSet)
+TrainSet <- TrainSet[, -NZV]
+TestSet  <- TestSet[, -NZV]
+dim(TrainSet)
+dim(TestSet)
+```
+
+
+
+```{r 3}
+AllNA    <- sapply(TrainSet, function(x) mean(is.na(x))) > 0.95
+TrainSet <- TrainSet[, AllNA==FALSE]
+TestSet  <- TestSet[, AllNA==FALSE]
+dim(TrainSet)
+dim(TestSet)
+
+
+```
+
+
+
+```{r 4}
+
+# remove identification only variables (columns 1 to 5)
+TrainSet <- TrainSet[, -(1:5)]
+TestSet  <- TestSet[, -(1:5)]
+dim(TrainSet)
+dim(TestSet)
+
+```
+
+
+```{r 5}
+
+# model fit
+set.seed(12345)
+controlRF <- trainControl(method="cv", number=3, verboseIter=FALSE)
+modFitRandForest <- train(classe ~ ., data=TrainSet, method="rf",
+                          trControl=controlRF)
+modFitRandForest$finalModel
+
+
+
+```
+
+
+
+```{r 6}
+
+
+predict_random_forest <- predict(modFitRandForest, newdata = TestSet)
+confusionMatrix_random_forest <- confusionMatrix(predict_random_forest,TestSet$classe)
+confusionMatrix_random_forest
+```
+
+```{r 7}
+
+
+test_data_prediction <- predict(modFitRandForest, newdata = testing)
+test_data_prediction
+
+```
+
+
+
+
