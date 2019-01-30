@@ -1,0 +1,136 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r wages-data}
+library(ISLR);library(ggplot2);library(caret)
+data(Wage)
+summary(Wage)
+```
+
+```{r Feature - plot}
+inTrain   <- createDataPartition(y=Wage$wage, p=0.9, list=FALSE) 
+training <- Wage[inTrain,] 
+testing <- Wage[-inTrain,]
+featurePlot(x=training[,c("age","education","jobclass")],y=training$wage,plot = "pairs")
+
+
+
+```
+
+
+
+```{r qplot}
+qplot(age,wage,color=jobclass ,data=training)
+
+
+
+
+```
+
+
+
+```{r regression-smoothers}
+
+qq   <-   qplot(age,wage, colour=education,data=training)
+
+qq + geom_smooth(method='lm',formula = y~x)
+
+```
+
+
+
+
+
+```{r cutoff wage}
+
+library(Hmisc)
+library(survival)
+cutWage <- cut2(training$wage, g=3)
+table(cutWage)
+qplot(cutWage,age,data=training, fill=cutWage, geom=c("boxplot"))
+
+
+
+```
+
+```{r more-EDA}
+t1 <- table(cutWage, training$race)
+t1
+t2 <- table(cutWage, training$jobclass)
+t2
+t3 <- table(cutWage, training$education)
+t3
+
+
+```
+
+
+
+
+
+```{r density-plot}
+qplot(wage, colour=race,data=training, geom='density')
+qplot(wage, colour=education,data=training, geom='density')
+qplot(wage, colour=jobclass,data=training, geom='density')
+
+
+```
+
+
+
+
+```{r predicting}
+
+modelFit <-  train(wage ~., data= Wage, preProcess=c("center","scale"),method="glm")
+#modelFit$finalModel
+summary(modelFit)$r.squared
+prediction<-predict(modelFit,newdata=testing)
+prediction
+RMSE(testing$wage,prediction)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
