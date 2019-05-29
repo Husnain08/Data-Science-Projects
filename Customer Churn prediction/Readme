@@ -1,2 +1,3 @@
 In this Code, go through the whole data science pipeline to solve a business problem and predict customer churn using a Telco customer churn dataset.
 The data for this probelm is uploaded with the code file
+The specific problem that we want to address is whether a particular customer will keep his/her subscription or not based on the given characteristics
